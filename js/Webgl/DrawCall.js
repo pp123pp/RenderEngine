@@ -2,11 +2,11 @@ define([
     'js/Webgl/CONSTANTS'
 ],
     function (CONSTANTS) {
-    function DrawCall(gl, appState, program, vertexArray, primitive) {
+    function DrawCall(gl, state, program, vertexArray, primitive) {
         this.gl = gl;
         this.currentProgram = program;
         this.currentVertexArray = vertexArray;
-        this.appState = appState;
+        this.state = state;
 
         //保存uniform变量的索引
         this.uniformIndices = {};
@@ -84,7 +84,7 @@ define([
 
         draw: function () {
 
-            var state = this.appState;
+            var state = this.state;
 
             var uniformNames = this.uniformNames;
 

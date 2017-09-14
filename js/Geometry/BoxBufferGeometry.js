@@ -1,6 +1,15 @@
-define(['js/Math/Vector3'],function (Vector3) {
+define([
+    "js/Math/Vector3",
+    "js/Core/BufferAttribute",
+    "js/Geometry/BufferGeometry"
+],function (
+    Vector3,
+    {Float32BufferAttribute},
+    BufferGeometry) {
 
     function BoxBufferGeometry( width, height, depth, widthSegments, heightSegments, depthSegments ) {
+
+        BufferGeometry.call( this );
 
         this.type = 'BoxBufferGeometry';
 
@@ -44,12 +53,12 @@ define(['js/Math/Vector3'],function (Vector3) {
 
         // build geometry
 
-/*
+
     this.setIndex( indices );
     this.addAttribute( 'position', new Float32BufferAttribute( vertices, 3 ) );
     this.addAttribute( 'normal', new Float32BufferAttribute( normals, 3 ) );
     this.addAttribute( 'uv', new Float32BufferAttribute( uvs, 2 ) );
-*/
+
 
         function buildPlane( u, v, w, udir, vdir, width, height, depth, gridX, gridY, materialIndex ) {
 
@@ -152,15 +161,9 @@ define(['js/Math/Vector3'],function (Vector3) {
 
         }
 
-        return {
-            vertices : new Float32Array(vertices),
-            normals  : new Float32Array(normals),
-            uvs      : new Float32Array(uvs),
-            indices  : new Uint8Array(indices)
-        }
-
     }
 
+    BoxBufferGeometry.prototype = Object.create( BufferGeometry.prototype);
     BoxBufferGeometry.prototype.constructor = BoxBufferGeometry;
 
 

@@ -34,8 +34,10 @@ define([
     Object.assign( WebGL2Renderer.prototype, {
         constructor: WebGL2Renderer,
 
-        render: function (camera) {
+        render: function (scene, camera) {
             this.clear();
+
+
 
 
         },

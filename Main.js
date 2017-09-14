@@ -12,7 +12,9 @@ require([
         'js/Geometry/BoxBufferGeometry',
         'js/Cameras/PerspectiveCamera',
         'js/Math/Matrix4',
-        'js/Math/Vector3'],
+        'js/Math/Vector3',
+        'js/Secnes/Scene',
+        'js/Materials/Material'],
     function(
         CONSTANTS,
         Program,
@@ -24,7 +26,9 @@ require([
         BoxBufferGeometry,
         PerspectiveCamera,
         Matrix4,
-        Vector3
+        Vector3,
+        Scene,
+        Material
     ){
 
     App();
@@ -33,6 +37,10 @@ require([
 
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+
+        var scene = new Scene();
+
+        var material = new Material()
 
         var renderer = new WebGL2Renderer(canvas);
         renderer.setClearColor(0.0, 0.0, 0.0, 1.0);
@@ -45,6 +53,8 @@ require([
 
         var box = new BoxBufferGeometry(1, 1, 1);
 
+        scene.add(box);
+
         //创建存储attribute变量的缓冲区，并向缓冲区中写入数据
 
         //存储坐标的缓冲区
@@ -52,28 +62,28 @@ require([
             renderer.gl,
             CONSTANTS.FLOAT,
             3,
-            box.vertices
+            box.attributes.position.array
         );
 
         var uv = new VertexBuffer(
             renderer.gl,
             CONSTANTS.FLOAT,
             2,
-            box.uvs
+            box.attributes.uv.array
         );
 
         var normals = new VertexBuffer(
             renderer.gl,
             CONSTANTS.FLOAT,
             3,
-            box.normals
+            box.attributes.normal.array
         );
 
         var indices = new VertexBuffer(
             renderer.gl,
-            CONSTANTS.UNSIGNED_BYTE,
+            CONSTANTS.UNSIGNED_SHORT,
             3,
-            box.indices,
+            box.index.array,
             true
         );
 
@@ -94,23 +104,21 @@ require([
 
         camera.lookAt(new Vector3(0, 0, 0));
 
-
         var projectionMatrix = camera.projectionMatrix;
 
         var cameraMatrix = camera.matrixWorldInverse;
 
+        cameraMatrix.setPosition(new Vector3(3, 3, 3));
 
         var viewMatrix = new Matrix4().getInverse(cameraMatrix);
 
         var viewProjMatrix = new Matrix4().multiplyMatrices(projectionMatrix, viewMatrix);
 
-
         var modelMatrix = new Float32Array(new Matrix4().elements);
 
+        var eyePosition = new Float32Array(camera.position.toArray());
 
-        var eyePosition = new Float32Array([3, 3, 3]);
         var lightPosition = new Float32Array([1, 1, 0.5]);
-
 
         var sceneUniformBuffer = new UniformBuffer(
             renderer.gl,[

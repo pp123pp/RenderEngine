@@ -19,7 +19,22 @@ define([
 
         constructor: Camera,
 
-        isCamera: true
+        isCamera: true,
+
+        lookAt: function () {
+
+            var m1 = new Matrix4();
+
+
+            return function lookAt(vector) {
+
+                m1.lookAt(this.position, vector, this.up);
+
+                this.matrixWorldInverse.copy(m1)
+
+
+            }
+        }(),
 
 
     });

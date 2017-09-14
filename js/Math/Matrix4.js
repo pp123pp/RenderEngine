@@ -28,31 +28,53 @@ define([
         isMatrix4: true,
 
         lookAt: function () {
+
             var x = new Vector3();
             var y = new Vector3();
             var z = new Vector3();
 
-            return function lookAt(eye, target, up) {
+            return function lookAt( eye, target, up ) {
+
                 var te = this.elements;
 
                 z.subVectors( eye, target );
 
+                if ( z.lengthSq() === 0 ) {
+
+                    // eye and target are in the same position
+
+                    z.z = 1;
+
+                }
+
                 z.normalize();
-
-
                 x.crossVectors( up, z );
+
+                if ( x.lengthSq() === 0 ) {
+
+                    // up and z are parallel
+
+                    if ( Math.abs( up.z ) === 1 ) {
+
+                        z.x += 0.0001;
+
+                    } else {
+
+                        z.z += 0.0001;
+
+                    }
+
+                    z.normalize();
+                    x.crossVectors( up, z );
+
+                }
 
                 x.normalize();
                 y.crossVectors( z, x );
 
-                y.normalize();
-
-                te[ 0 ] = x.x; te[ 4 ] = y.x; te[ 8 ] = z.x;  te[ 12 ] = eye.x;
-                te[ 1 ] = x.y; te[ 5 ] = y.y; te[ 9 ] = z.y;  te[ 13 ] = eye.y;
-                te[ 2 ] = x.z; te[ 6 ] = y.z; te[ 10 ] = z.z; te[ 14 ] = eye.z;
-                te[ 3 ] = 0;   te[ 7 ] = 0;   te[ 11 ] = 0;   te[ 15 ] = 1;
-
-
+                te[ 0 ] = x.x; te[ 4 ] = y.x; te[ 8 ] = z.x;
+                te[ 1 ] = x.y; te[ 5 ] = y.y; te[ 9 ] = z.y;
+                te[ 2 ] = x.z; te[ 6 ] = y.z; te[ 10 ] = z.z;
 
                 return this;
 
@@ -209,6 +231,80 @@ define([
             te[ 4 ] = me[ 4 ]; te[ 5 ] = me[ 5 ]; te[ 6 ] = me[ 6 ]; te[ 7 ] = me[ 7 ];
             te[ 8 ] = me[ 8 ]; te[ 9 ] = me[ 9 ]; te[ 10 ] = me[ 10 ]; te[ 11 ] = me[ 11 ];
             te[ 12 ] = me[ 12 ]; te[ 13 ] = me[ 13 ]; te[ 14 ] = me[ 14 ]; te[ 15 ] = me[ 15 ];
+
+            return this;
+
+        },
+
+        makeRotationFromQuaternion: function ( q ) {
+
+            var te = this.elements;
+
+            var x = q._x, y = q._y, z = q._z, w = q._w;
+            var x2 = x + x, y2 = y + y, z2 = z + z;
+            var xx = x * x2, xy = x * y2, xz = x * z2;
+            var yy = y * y2, yz = y * z2, zz = z * z2;
+            var wx = w * x2, wy = w * y2, wz = w * z2;
+
+            te[ 0 ] = 1 - ( yy + zz );
+            te[ 4 ] = xy - wz;
+            te[ 8 ] = xz + wy;
+
+            te[ 1 ] = xy + wz;
+            te[ 5 ] = 1 - ( xx + zz );
+            te[ 9 ] = yz - wx;
+
+            te[ 2 ] = xz - wy;
+            te[ 6 ] = yz + wx;
+            te[ 10 ] = 1 - ( xx + yy );
+
+            // last column
+            te[ 3 ] = 0;
+            te[ 7 ] = 0;
+            te[ 11 ] = 0;
+
+            // bottom row
+            te[ 12 ] = 0;
+            te[ 13 ] = 0;
+            te[ 14 ] = 0;
+            te[ 15 ] = 1;
+
+            return this;
+
+        },
+
+        compose: function ( position, quaternion, scale ) {
+
+            this.makeRotationFromQuaternion( quaternion );
+            this.scale( scale );
+            this.setPosition( position );
+
+            return this;
+
+        },
+
+        scale: function ( v ) {
+
+            var te = this.elements;
+            var x = v.x, y = v.y, z = v.z;
+
+            te[ 0 ] *= x; te[ 4 ] *= y; te[ 8 ] *= z;
+            te[ 1 ] *= x; te[ 5 ] *= y; te[ 9 ] *= z;
+            te[ 2 ] *= x; te[ 6 ] *= y; te[ 10 ] *= z;
+            te[ 3 ] *= x; te[ 7 ] *= y; te[ 11 ] *= z;
+
+            return this;
+
+        },
+
+
+        setPosition: function ( v ) {
+
+            var te = this.elements;
+
+            te[ 12 ] = v.x;
+            te[ 13 ] = v.y;
+            te[ 14 ] = v.z;
 
             return this;
 
