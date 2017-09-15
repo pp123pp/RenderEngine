@@ -1,6 +1,10 @@
 define([
-    'js/Webgl/CONSTANTS'
-],function (CONSTANTS) {
+    'js/Webgl/CONSTANTS',
+    'js/Webgl/Program'
+],function (
+    CONSTANTS,
+    Program
+) {
     function WebGL2Renderer( canvas, contextAttributes ) {
 
         this.canvas = canvas;
@@ -37,12 +41,61 @@ define([
         render: function (scene, camera) {
             this.clear();
 
+            renderObject(scene.children);
+            
+            function renderObject(objectArr) {
+                var i, len;
 
+                for(i=0, len=objectArr.length; i<len; i++){
+
+
+
+                }
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
 
         },
         
         setViewport: function ( x, y, width, height ) {
+
             if (this.viewportWidth !== width || this.viewportHeight !== height ||
                 this.viewportX !== x || this.viewportY !== y) {
                 this.viewportX = x;

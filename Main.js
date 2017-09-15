@@ -14,7 +14,9 @@ require([
         'js/Math/Matrix4',
         'js/Math/Vector3',
         'js/Secnes/Scene',
-        'js/Materials/Material'],
+        'js/Materials/Material',
+        'js/Materials/MeshPhongMaterial',
+        'js/Objects/Mesh'],
     function(
         CONSTANTS,
         Program,
@@ -28,7 +30,9 @@ require([
         Matrix4,
         Vector3,
         Scene,
-        Material
+        Material,
+        MeshPhongMaterial,
+        Mesh
     ){
 
     App();
@@ -40,7 +44,7 @@ require([
 
         var scene = new Scene();
 
-        var material = new Material()
+
 
         var renderer = new WebGL2Renderer(canvas);
         renderer.setClearColor(0.0, 0.0, 0.0, 1.0);
@@ -51,7 +55,9 @@ require([
 
         var program = new Program(renderer.gl, vertexShaderSource, fragmentShaderSource);
 
-        var box = new BoxBufferGeometry(1, 1, 1);
+        var material = new MeshPhongMaterial();
+        var boxGeometry = new BoxBufferGeometry(1, 1, 1);
+        var box = new Mesh(boxGeometry, material);
 
         scene.add(box);
 
@@ -62,28 +68,28 @@ require([
             renderer.gl,
             CONSTANTS.FLOAT,
             3,
-            box.attributes.position.array
+            boxGeometry.attributes.position.array
         );
 
         var uv = new VertexBuffer(
             renderer.gl,
             CONSTANTS.FLOAT,
             2,
-            box.attributes.uv.array
+            boxGeometry.attributes.uv.array
         );
 
         var normals = new VertexBuffer(
             renderer.gl,
             CONSTANTS.FLOAT,
             3,
-            box.attributes.normal.array
+            boxGeometry.attributes.normal.array
         );
 
         var indices = new VertexBuffer(
             renderer.gl,
             CONSTANTS.UNSIGNED_SHORT,
             3,
-            box.index.array,
+            boxGeometry.index.array,
             true
         );
 
@@ -114,7 +120,11 @@ require([
 
         var viewProjMatrix = new Matrix4().multiplyMatrices(projectionMatrix, viewMatrix);
 
-        var modelMatrix = new Float32Array(new Matrix4().elements);
+        var modelMatrix = new Matrix4();
+
+        modelMatrix.setPosition(new Vector3(0, 0, 0));
+
+        modelMatrix = new Float32Array(modelMatrix.elements);
 
         var eyePosition = new Float32Array(camera.position.toArray());
 

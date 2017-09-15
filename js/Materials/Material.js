@@ -9,7 +9,10 @@ define([
     function Material() {
 
         //console.log(FrontSide)
-        this.side = FrontSide
+        this.side = FrontSide;
+
+        this.vertexSource = null;
+        this.fragmentSource = null;
 
     }
 

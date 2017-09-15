@@ -17,6 +17,9 @@ define([
 
         this.wireframe = false;
 
+        this.vertexSource = document.getElementById('vertex').text.trim();
+        this.fragmentSource = document.getElementById('fragment').text.trim();
+
     }
 
     MeshPhongMaterial.prototype = Object.create( Material.prototype );
